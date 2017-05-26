@@ -23,9 +23,6 @@ def write_file(path, data):
     f.write(data)
     f.close()
 
-creat_project_dir('theNewBoston')
-create_data_files('theNewBoston', 'https://thenewboston.com/')
-
 # Add data onto an existing file
 def append_to_file(path, data):
     with open(path, 'a') as file: #a means write at the end of the file
@@ -36,3 +33,18 @@ def delete_file_contents(path):
     with open(path, 'w'):
         pass
         # Do nothing
+
+# Read a file and convert each line to a set item
+def file_to_set(file_name):
+    results = set()
+    with open(file_name, 'rt') as f:
+        for line in f:
+            results.add(line.replace('\n', ''))
+    return results
+
+# Iterate through a set, each item item will be a new line in the file
+def set_to_file(links, file):
+    delete_file_contents(file)
+    for link in sorted(links):
+        append_to_file(link, file)
+    return file 
