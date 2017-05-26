@@ -1,4 +1,4 @@
-from urllib.request import urlopen
+from urllib2 import urlopen
 from link_finder import LinkFinder
 from general import *
 
@@ -72,7 +72,7 @@ class Spider:
                 continue
             Spider.queue.add(url)
 
-    
+
     @staticmethod
     def update_files():
         set_to_file(Spider.queue, Spider.queue_file)
