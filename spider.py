@@ -1,5 +1,7 @@
 from urllib2 import urlopen
 from link_finder import LinkFinder
+from urlparse import urljoin
+import json
 from general import *
 
 class Spider:
@@ -10,16 +12,19 @@ class Spider:
     domain_name = ''
     queue_file = ''
     crawled_file = ''
+    json_file = ''
+    json_text = {}
+    file_order = 0
     queue = set()
     crawled = set()
 
-
-    def __init__(self, project_name, base_url, domain_name):
+    def __init__(self, project_name, base_url, domain_name, file_order):
         Spider.project_name = project_name
         Spider.base_url = base_url
         Spider.domain_name = domain_name
-        Spider.queue_file = Spider.project_name + '/queue.txt'
-        Spider.crawled_file = Spider.crawled_name + '/crawled.txt'
+        Spider.queue_file = Spider.project_name + '/queue_url.txt'
+        Spider.crawled_file = Spider.project_name + '/crawled_url.txt'
+        Spider.file_order = file_order
 
         self.boot()
         self.crawl_page('First spider', Spider.base_url)
@@ -27,8 +32,8 @@ class Spider:
     # static method means this method(function) does not belong to the class, so no relation with "self"
     @staticmethod
     def boot():
-        creat_project_dir(Spider.project_name)
-        create_data_files(Spider.project_name, Spider.base_url)
+        creat_project_dir(Spider.project_name, Spider.project_name + '/json_file')
+        create_url_files(Spider.project_name, Spider.base_url)
         Spider.queue = file_to_set(Spider.queue_file)
         Spider.crawled = file_to_set(Spider.crawled_file)
 
@@ -36,9 +41,9 @@ class Spider:
     @staticmethod
     def crawl_page(thread_name, page_url):
         if page_url not in Spider.crawled:
-            print (thread_name + 'now crawling ' + page_url)
+            print (thread_name + ' now crawling ' + page_url)
             print ('Queue ' + str(len(Spider.queue)) + ' | Crawled ' + str(len(Spider.crawled)))
-            Spider.add_links_to_queue(Spider.gather_link(page_url)) #
+            Spider.add_links_to_queue(Spider.gather_links(page_url)) #
             Spider.queue.remove(page_url) # update the waiting queue
             Spider.crawled.add(page_url) # update the crawled list
             Spider.update_files()
@@ -49,15 +54,28 @@ class Spider:
         try:
             response = urlopen(page_url)
             # make sure you get the html data
-            if response.getheader('Content-Type') == 'text/html':
+            # print (response.info().gettype())
+            finder = LinkFinder(Spider.base_url, page_url)
+            if response.info().gettype() == 'text/html':
                 html_bytes = response.read() # html_byte is 01010101
                 html_string = html_bytes.decode('utf-8')
-            finder = LinkFinder(Spider.base_url, page_url)
+                Spider.concat_json(Spider.base_url, page_url, html_string)
             finder.feed(html_string)
-        except:
-            print ('Error: can not crawl page!')
+        except Exception as e:
+            print ('Error: can not crawl page! ' + str(e))
             return set()
         return finder.page_links()
+
+
+    @staticmethod
+    def concat_json(base_url, page_url, text):
+        url = urljoin(base_url, page_url)
+        Spider.json_text['url'] = url
+        Spider.json_text['content'] = text
+        json_to_file(Spider.project_name, 'web'+ str(Spider.file_order) + '.txt', json.dumps(Spider.json_text) + '\n')
+        Spider.file_order += 1
+
+
 
     @staticmethod
     # check whether already exists in waiting list and whether already in crawled list

@@ -1,5 +1,6 @@
 import threading
 import Queue
+import time
 from spider import Spider
 from domain import *
 from general import *
@@ -7,12 +8,13 @@ from general import *
 PROJECT_NAME = 'thenewboston'
 HOMEPAGE = 'https://thenewboston.com/'
 DOMAIN_NAME = get_domain_name(HOMEPAGE)
-QUEUE_FILE = PROJECT_NAME + '/queue.txt'
-CRAWLED_FILE = PROJECT_NAME + '/crawled.txt'
-NUMBER_OF_THREADS = 2
+FILE_ORDER = 0
+QUEUE_FILE = PROJECT_NAME + '/queue_url.txt'
+CRAWLED_FILE = PROJECT_NAME + '/crawled_url.txt'
+NUMBER_OF_THREADS = 1
+CRAWLED_DEPTH = 2
 queue = Queue.Queue() #pay attention
-Spider(PROJECT_NAME, HOMEPAGE, DOMAIN_NAME)
-
+Spider(PROJECT_NAME, HOMEPAGE, DOMAIN_NAME, FILE_ORDER)
 
 # Create worker threads (will die when main exists)
 def create_workers():
@@ -21,11 +23,13 @@ def create_workers():
         t = threading.Thread(target=work) #target is ?
         t.daemon = True
         t.start()
+    # raw_input('Press enter to kill thread')
 
 
 # Do the next job in the queue
 def work():
     while True:
+        time.sleep(1)
         url = queue.get()
         Spider.crawl_page(threading.current_thread().name, url)
         queue.task_done()
@@ -45,3 +49,11 @@ def crawl():
     if len(queued_links) > 0:
         print (str(len(queued_links)) + ' links in the queue')
         create_jobs()
+
+def main():
+    create_workers()
+    crawl()
+
+if __name__ == '__main__':
+    # execute only if run as a script
+    main()

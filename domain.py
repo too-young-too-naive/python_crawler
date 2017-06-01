@@ -15,6 +15,3 @@ def get_sub_domain_name(url):
         return urlparse(url).netloc #network location
     except:
         return ''
-
-
-print(get_domain_name('http://email.example.thenewboston.com/index.php'))
