@@ -4,6 +4,7 @@ from urlparse import urljoin
 import json
 from general import *
 
+
 class Spider:
 
     # Class variables (are shared among all instances)
@@ -37,7 +38,7 @@ class Spider:
         Spider.queue = file_to_set(Spider.queue_file)
         Spider.crawled = file_to_set(Spider.crawled_file)
 
-    #multithread program, so need to display the url name to user
+    # multi-thread program, so need to display the url name to user
     @staticmethod
     def crawl_page(thread_name, page_url):
         if page_url not in Spider.crawled:
@@ -65,7 +66,6 @@ class Spider:
             return set()
         return finder.page_links()
 
-
     @staticmethod
     def concat_json(base_url, page_url, text):
         url = urljoin(base_url, page_url)
@@ -77,8 +77,6 @@ class Spider:
         json_to_file(Spider.project_name, name, json.dumps(Spider.json_text) + '\n')
         print 'Crawled web' + str(Spider.file_order)
         Spider.file_order += 1
-
-
 
     @staticmethod
     # check whether already exists in waiting list and whether already in crawled list
@@ -92,7 +90,6 @@ class Spider:
                 # check whether the url belong to my web, in case of google, facebook
                 continue
             Spider.queue.add(url)
-
 
     @staticmethod
     def update_files():
