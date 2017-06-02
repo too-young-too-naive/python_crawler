@@ -54,7 +54,6 @@ class Spider:
         try:
             response = urlopen(page_url)
             # make sure you get the html data
-            # print (response.info().gettype())
             finder = LinkFinder(Spider.base_url, page_url)
             if response.info().gettype() == 'text/html':
                 html_bytes = response.read() # html_byte is 01010101
@@ -72,7 +71,11 @@ class Spider:
         url = urljoin(base_url, page_url)
         Spider.json_text['url'] = url
         Spider.json_text['content'] = text
-        json_to_file(Spider.project_name, 'web'+ str(Spider.file_order) + '.txt', json.dumps(Spider.json_text) + '\n')
+        if len(Spider.crawled) > Spider.file_order:
+            Spider.file_order = len(Spider.crawled)
+        name = 'web' + str(Spider.file_order) + '.txt'
+        json_to_file(Spider.project_name, name, json.dumps(Spider.json_text) + '\n')
+        print 'Crawled web' + str(Spider.file_order)
         Spider.file_order += 1
 
 

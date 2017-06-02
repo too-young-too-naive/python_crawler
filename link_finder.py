@@ -6,7 +6,6 @@ __metaclass__ = type
 class LinkFinder(HTMLParser):
 
     def __init__(self, base_url, page_url):
-        # super(LinkFinder, self).__init__()
         # ===============================================
         HTMLParser.__init__(self) # important
         # ===============================================
@@ -27,9 +26,3 @@ class LinkFinder(HTMLParser):
 
     def error(self, message):
         pass
-
-
-# base = 'example/'
-# page = '2016/welcome.html'
-# finder = LinkFinder(base, page)
-# finder.feed('<html><head><title>Test</title></head></html>')

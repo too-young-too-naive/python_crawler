@@ -18,7 +18,7 @@ Spider(PROJECT_NAME, HOMEPAGE, DOMAIN_NAME, FILE_ORDER)
 
 # Create worker threads (will die when main exists)
 def create_workers():
-    # create 8 or 2 threads
+    # create threads
     for x in range(NUMBER_OF_THREADS):
         t = threading.Thread(target=work) #target is ?
         t.daemon = True
