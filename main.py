@@ -10,6 +10,8 @@ QUEUE_FILE = PROJECT_NAME + '/queue_url.txt'
 CRAWLED_FILE = PROJECT_NAME + '/crawled_url.txt'
 queue = Queue.Queue()  # pay attention
 domain_name = get_domain_name(HOMEPAGE)
+Spider(PROJECT_NAME, HOMEPAGE, domain_name, FILE_ORDER)
+print 'Start crawling ' + HOMEPAGE
 
 
 # Create worker threads (will die when main exists)
@@ -25,9 +27,13 @@ def create_workers():
 # Do the next job in the queue
 def work():
     while True:
-        time.sleep(1)
+        time.sleep(SLEEP_TIME)
         url = queue.get()
+        print (threading.current_thread().name + ' now crawling ' + url)
+        print ('Queue ' + str(len(Spider.queue)) + ' | Crawled ' + str(len(Spider.crawled)))
         Spider.crawl_page(threading.current_thread().name, url)
+        print 'Crawled web' + str(Spider.file_order)
+        Spider.file_order += 1
         queue.task_done()
 
 
@@ -48,7 +54,6 @@ def crawl():
 
 
 def main():
-    Spider(PROJECT_NAME, HOMEPAGE, domain_name, FILE_ORDER)
     create_workers()
     crawl()
 

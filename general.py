@@ -1,5 +1,5 @@
 import os
-
+import json
 
 # Each website you crawl is a separate project (folder)
 def creat_project_dir(directory1, directory2):
@@ -54,11 +54,18 @@ def file_to_set(file_name):
 def set_to_file(links, file_name):
     with open(file_name, 'w') as f:
         for link in sorted(links):
+            link = link.encode('ascii', 'ignore').decode('ascii')
             f.write(link + '\n')
 
 
 def json_to_file(project_name, file_name, text):
     path = project_name + '/json_file/' + file_name
     with open(path, 'w+') as f:
-        f.write(text + '\n')
+        json.dump(text, f, ensure_ascii=False)
 
+
+def text_to_file(project_name, file_name, text):
+    path = project_name + '/text_file/' + file_name
+    with open(path, 'w+', encoding='utf-8') as f:
+        # text = text.encode('ascii', 'ignore').decode('ascii')
+        f.write(text)
