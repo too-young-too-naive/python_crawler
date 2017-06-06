@@ -1,12 +1,13 @@
 from urllib2 import urlopen
 from link_finder import LinkFinder
 from urlparse import urljoin
-import json
+from domain import *
 import chardet
 from general import *
 import sys
 reload(sys)
 sys.setdefaultencoding("utf-8")
+
 
 class Spider:
 
@@ -14,6 +15,7 @@ class Spider:
     project_name = ''
     base_url = ''
     domain_name = ''
+    server_name = ''
     queue_file = ''
     crawled_file = ''
     json_file = ''
@@ -28,10 +30,11 @@ class Spider:
     # dic["c"] = c2
     # with open("a.json", "w") as fw:
     #     json.dump(dic, fw)
-    def __init__(self, project_name, base_url, domain_name, file_order):
+    def __init__(self, project_name, base_url, domain_name, server_name, file_order):
         Spider.project_name = project_name
         Spider.base_url = base_url
         Spider.domain_name = domain_name
+        Spider.server_name = server_name
         Spider.queue_file = Spider.project_name + '/queue_url.txt'
         Spider.crawled_file = Spider.project_name + '/crawled_url.txt'
         Spider.file_order = file_order
@@ -68,11 +71,9 @@ class Spider:
             # make sure you get the html data
             if response.info().gettype() == 'text/html':
                 html_bytes = response.read() # html_byte is 01010101
-                # print html_bytes
                 decode_type = chardet.detect(html_bytes)['encoding']
                 print decode_type
-                html_string = html_bytes.decode('utf-8')
-                # print html_string
+                html_string = html_bytes.decode(decode_type)
                 # Spider.concat_text(html_string)
                 Spider.concat_json(Spider.base_url, page_url, html_string)
             finder = LinkFinder(Spider.base_url, page_url)
@@ -106,11 +107,12 @@ class Spider:
     # check whether already exists in waiting list and whether already in crawled list
     def add_links_to_queue(links):
         for url in links:
-            if url in Spider.queue:
+            if (url in Spider.queue) or (url in Spider.crawled):
                 continue
-            if url in Spider.crawled:
-                continue
-            if Spider.domain_name not in url:
+            # if Spider.domain_name != get_domain_name(url):
+            #     # check whether the url belong to my web, in case of google, facebook whatever
+            #     continue
+            if Spider.server_name != get_server_name(url):
                 # check whether the url belong to my web, in case of google, facebook whatever
                 continue
             Spider.queue.add(url)

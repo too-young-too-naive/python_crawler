@@ -10,7 +10,8 @@ QUEUE_FILE = PROJECT_NAME + '/queue_url.txt'
 CRAWLED_FILE = PROJECT_NAME + '/crawled_url.txt'
 queue = Queue.Queue()  # pay attention
 domain_name = get_domain_name(HOMEPAGE)
-Spider(PROJECT_NAME, HOMEPAGE, domain_name, FILE_ORDER)
+server_name = get_server_name(HOMEPAGE)
+Spider(PROJECT_NAME, HOMEPAGE, domain_name, server_name, FILE_ORDER)
 print 'Start crawling ' + HOMEPAGE
 
 
