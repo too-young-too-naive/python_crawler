@@ -1,5 +1,8 @@
 import os
+import io
 import json
+import codecs
+
 
 # Each website you crawl is a separate project (folder)
 def creat_project_dir(directory1, directory2):
@@ -44,24 +47,36 @@ def delete_file_contents(path):
 # Read a file and convert each line to a set item
 def file_to_set(file_name):
     results = set()
-    with open(file_name, 'rt') as f:
-        for line in f:
-            results.add(line.replace('\n', ''))
+    # with open(file_name, 'rt') as f:
+    #     for line in f:
+    #         results.add(line.replace('\n', ''))
+    f = codecs.open(file_name, 'rt', 'utf-8')
+    for line in f:
+        results.add(line.replace('\n', ''))
     return results
 
 
 # Iterate through a set, each item item will be a new line in the file
+# def set_to_file(links, file_name):
+#     with open(file_name, 'w') as f:
+#         for link in sorted(links):
+#             # link = link.encode('utf-8').decode('utf-8')
+#             f.write(link + '\n')
+#
+
+
 def set_to_file(links, file_name):
-    with open(file_name, 'w') as f:
-        for link in sorted(links):
-            # link = link.encode('utf-8').decode('utf-8')
-            f.write(link + '\n')
+    f = codecs.open(file_name, "w", "utf-8")
+    for l in sorted(links):
+        f.write(l + "\n")
+    f.close()
 
 
 def json_to_file(project_name, file_name, text):
     path = project_name + '/json_file/' + file_name
-    with open(path, 'w+') as f:
-        json.dump(text, f, ensure_ascii=False) # ensure_ascii false is important
+    with io.open(path, 'w+', encoding='utf-8') as f:
+        # json.dump(text, f, ensure_ascii=False) # ensure_ascii false is important
+        f.write(json.dumps(text,ensure_ascii=False))
 
 
 def text_to_file(project_name, file_name, text):

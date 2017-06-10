@@ -5,8 +5,9 @@ from domain import *
 import chardet
 from general import *
 import sys
+from urllib import quote, quote_plus
+import string
 reload(sys)
-sys.setdefaultencoding("utf-8")
 
 
 class Spider:
@@ -56,8 +57,8 @@ class Spider:
     @staticmethod
     def crawl_page(thread_name, page_url):
         if page_url not in Spider.crawled:
-            # print (thread_name + ' now crawling ' + page_url)
-            # print ('Queue ' + str(len(Spider.queue)) + ' | Crawled ' + str(len(Spider.crawled)))
+            print (thread_name + ' now crawling ' + page_url)
+            print ('Queue ' + str(len(Spider.queue)) + ' | Crawled ' + str(len(Spider.crawled)))
             Spider.add_links_to_queue(Spider.gather_links(page_url)) #
             Spider.queue.remove(page_url) # update the waiting queue
             Spider.crawled.add(page_url) # update the crawled list
@@ -67,14 +68,12 @@ class Spider:
     def gather_links(page_url):
         html_string = ''
         try:
-            response = urlopen(page_url)
+            response = urlopen(quote(page_url.encode('utf-8'), safe=string.printable))
             # make sure you get the html data
             if response.info().gettype() == 'text/html':
                 html_bytes = response.read() # html_byte is 01010101
                 decode_type = chardet.detect(html_bytes)['encoding']
-                print decode_type
                 html_string = html_bytes.decode(decode_type)
-                # Spider.concat_text(html_string)
                 Spider.concat_json(Spider.base_url, page_url, html_string)
             finder = LinkFinder(Spider.base_url, page_url)
             finder.feed(html_string)
@@ -94,7 +93,6 @@ class Spider:
         json_to_file(Spider.project_name, name, Spider.json_text)
         # print Spider.json_text
 
-
     @staticmethod
     def concat_text(text):
         if len(Spider.crawled) > Spider.file_order:
@@ -102,11 +100,11 @@ class Spider:
         name = 'web' + str(Spider.file_order) + '.html'
         text_to_file(Spider.project_name, name, text)
 
-
     @staticmethod
     # check whether already exists in waiting list and whether already in crawled list
     def add_links_to_queue(links):
         for url in links:
+            url = del_version(url)
             if (url in Spider.queue) or (url in Spider.crawled):
                 continue
             # if Spider.domain_name != get_domain_name(url):

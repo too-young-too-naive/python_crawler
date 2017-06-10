@@ -22,7 +22,6 @@ def create_workers():
         t = threading.Thread(target=work)
         t.daemon = True
         t.start()
-    # raw_input('Press enter to kill thread')
 
 
 # Do the next job in the queue

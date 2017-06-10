@@ -26,5 +26,13 @@ def get_server_name(url):
     except:
         return ''
 
-print get_domain_name('http://www.merckmanuals.com/professional/clinical-pharmacology')
-print get_server_name('http://www.merckmanuals.com/professional/clinical-pharmacology')
+
+def del_version(url):
+    try:
+        results = url.split('#v')
+        return results[0]
+    except:
+        return url
+
+# print get_domain_name('http://www.merckmanuals.com/professional/clinical-pharmacology')
+# print get_server_name('http://www.merckmanuals.com/professional/clinical-pharmacology')
