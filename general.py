@@ -76,7 +76,7 @@ def json_to_file(project_name, file_name, text):
     path = project_name + '/json_file/' + file_name
     with io.open(path, 'w+', encoding='utf-8') as f:
         # json.dump(text, f, ensure_ascii=False) # ensure_ascii false is important
-        f.write(json.dumps(text,ensure_ascii=False))
+        f.write(json.dumps(text, ensure_ascii=False))
 
 
 def text_to_file(project_name, file_name, text):

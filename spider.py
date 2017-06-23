@@ -107,9 +107,6 @@ class Spider:
             url = del_version(url)
             if (url in Spider.queue) or (url in Spider.crawled):
                 continue
-            # if Spider.domain_name != get_domain_name(url):
-            #     # check whether the url belong to my web, in case of google, facebook whatever
-            #     continue
             if Spider.server_name != get_server_name(url):
                 # check whether the url belong to my web, in case of google, facebook whatever
                 continue
@@ -117,5 +114,8 @@ class Spider:
 
     @staticmethod
     def update_files():
-        set_to_file(Spider.queue, Spider.queue_file)
-        set_to_file(Spider.crawled, Spider.crawled_file)
+        try:
+            set_to_file(Spider.queue, Spider.queue_file)
+            set_to_file(Spider.crawled, Spider.crawled_file)
+        except Exception as e:
+            print 'Error when updating files: ' + str(e)
