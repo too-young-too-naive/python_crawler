@@ -1,3 +1,4 @@
+import urllib2
 from urllib2 import urlopen
 from link_finder import LinkFinder
 from urlparse import urljoin
@@ -11,7 +12,6 @@ reload(sys)
 
 
 class Spider:
-
     # Class variables (are shared among all instances)
     project_name = ''
     base_url = ''
@@ -68,7 +68,10 @@ class Spider:
     def gather_links(page_url):
         html_string = ''
         try:
-            response = urlopen(quote(page_url.encode('utf-8'), safe=string.printable))
+            # response = urlopen(quote(page_url.encode('utf-8'), safe=string.printable))
+            # print type(page_url)
+            request = urllib2.Request(page_url, headers={'User-Agent': 'Magic Browser'})
+            response = urlopen(request)
             # make sure you get the html data
             if response.info().gettype() == 'text/html':
                 html_bytes = response.read() # html_byte is 01010101
